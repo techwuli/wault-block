@@ -1,9 +1,9 @@
-﻿using Hyperledger.Indy.WalletApi;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hyperledger.Indy.WalletApi;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hyperledger.Indy.Test.WalletTests
 {
@@ -18,7 +18,7 @@ namespace Hyperledger.Indy.Test.WalletTests
         }
 
         public bool IsOpen { get; set; }
-        
+
         public ErrorCode Set(string key, string value)
         {
             var record = new WalletRecord() { Value = value, TimeCreated = DateTime.Now };
@@ -65,19 +65,23 @@ namespace Hyperledger.Indy.Test.WalletTests
 
             var valuesArray = new JArray();
 
-            foreach(var item in matchingItems)
+            foreach (var item in matchingItems)
             {
                 var record = item.Value;
 
-                var value = new JObject();
-                value.Add("key", item.Key);
-                value.Add("value", record.Value);
+                var value = new JObject
+                {
+                    { "key", item.Key },
+                    { "value", record.Value }
+                };
 
                 valuesArray.Add(value);
             }
 
-            var valuesJObject = new JObject();
-            valuesJObject.Add("values", valuesArray);
+            var valuesJObject = new JObject
+            {
+                { "values", valuesArray }
+            };
 
             valuesJson = valuesJObject.ToString(Formatting.None);
 

@@ -2,28 +2,26 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <UserSecretsId>aspnet-WaultBlock.Web-F38D0666-F571-41F8-BF34-50F0CA7481EB</UserSecretsId>
+    <UserSecretsId>aspnet-WaultBlock.Web-09BE937A-B26C-4348-82BD-AF839C87AD6D</UserSecretsId>
   </PropertyGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" PrivateAssets="All" />
-     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.2" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.1" />
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
-    <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\indy-sdk-dotnet\indy-sdk-dotnet.csproj" />
     <ProjectReference Include="..\WaultBlock.Data\WaultBlock.Data.csproj" />
+    <ProjectReference Include="..\WaultBlock.Indy\WaultBlock.Indy.csproj" />
     <ProjectReference Include="..\WaultBlock.Models\WaultBlock.Models.csproj" />
   </ItemGroup>
-
 
 </Project>

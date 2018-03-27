@@ -1,8 +1,7 @@
-﻿using Hyperledger.Indy.Utils;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using static Hyperledger.Indy.Consts;
+using Hyperledger.Indy.Utils;
 using static Hyperledger.Indy.WalletApi.NativeMethods;
 
 namespace Hyperledger.Indy.WalletApi
@@ -99,7 +98,7 @@ namespace Hyperledger.Indy.WalletApi
             catch (Exception)
             {
                 return ErrorCode.CommonInvalidState;
-            }            
+            }
         }
 
         /// <summary>
@@ -139,7 +138,7 @@ namespace Hyperledger.Indy.WalletApi
             try
             {
                 var wallet = GetWalletByHandle(handle);
-                return wallet.Set(key, value);                
+                return wallet.Set(key, value);
             }
             catch (Exception)
             {
@@ -162,12 +161,11 @@ namespace Hyperledger.Indy.WalletApi
             {
                 var wallet = GetWalletByHandle(handle);
 
-                string value;
-                var result = wallet.Get(key, out value);
+                var result = wallet.Get(key, out var value);
 
                 if (result != ErrorCode.Success)
                     return result;
-                
+
                 value_ptr = MarshalToUnmanaged(value);
 
                 return ErrorCode.Success;
@@ -193,8 +191,7 @@ namespace Hyperledger.Indy.WalletApi
             {
                 var wallet = GetWalletByHandle(handle);
 
-                string value;
-                var result = wallet.GetNotExpired(key, out value);
+                var result = wallet.GetNotExpired(key, out var value);
 
                 if (result != ErrorCode.Success)
                     return result;
@@ -222,8 +219,7 @@ namespace Hyperledger.Indy.WalletApi
             {
                 var wallet = GetWalletByHandle(handle);
 
-                string value;
-                var result = wallet.List(keyPrefix, out value);
+                var result = wallet.List(keyPrefix, out var value);
 
                 if (result != ErrorCode.Success)
                     return result;
@@ -247,7 +243,7 @@ namespace Hyperledger.Indy.WalletApi
         {
             try
             {
-                return Close(handle);                
+                return Close(handle);
             }
             catch (Exception)
             {
@@ -288,7 +284,7 @@ namespace Hyperledger.Indy.WalletApi
             {
                 var wallet = GetWalletByHandle(handle);
 
-                Marshal.FreeHGlobal(value);                
+                Marshal.FreeHGlobal(value);
                 return ErrorCode.Success;
             }
             catch (Exception)
@@ -305,10 +301,10 @@ namespace Hyperledger.Indy.WalletApi
         /// <returns>A pointer to the unmanaged memory.</returns>
         private IntPtr MarshalToUnmanaged(string value)
         {
-            byte[] buffer = Encoding.UTF8.GetBytes(value); // not null terminated
+            var buffer = Encoding.UTF8.GetBytes(value); // not null terminated
             Array.Resize(ref buffer, buffer.Length + 1);
             buffer[buffer.Length - 1] = 0; // terminating 0
-            IntPtr unmanagedMemoryPtr = Marshal.AllocHGlobal(buffer.Length);
+            var unmanagedMemoryPtr = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, unmanagedMemoryPtr, buffer.Length);
             return unmanagedMemoryPtr;
         }

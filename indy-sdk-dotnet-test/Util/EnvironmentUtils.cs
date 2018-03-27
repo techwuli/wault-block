@@ -9,7 +9,7 @@ namespace Hyperledger.Indy.Test
         public static string GetTestPoolIP()
         {
             var testPoolIp = Environment.GetEnvironmentVariable("TEST_POOL_IP");
-            return testPoolIp != null ? testPoolIp : "127.0.0.1";
+            return testPoolIp ?? "127.0.0.1";
         }
 
         public static string GetUserHomePath()

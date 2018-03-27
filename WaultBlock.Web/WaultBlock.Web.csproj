@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\indy-sdk-dotnet\indy-sdk-dotnet.csproj" />
+    <ProjectReference Include="..\WaultBlock.Data\WaultBlock.Data.csproj" />
+    <ProjectReference Include="..\WaultBlock.Models\WaultBlock.Models.csproj" />
   </ItemGroup>
 
 

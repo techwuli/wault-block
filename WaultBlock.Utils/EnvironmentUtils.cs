@@ -2,14 +2,14 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Hyperledger.Indy.Test
+namespace WaultBlock.Utils
 {
-    static class EnvironmentUtils
+    public static class EnvironmentUtils
     {
         public static string GetTestPoolIP()
         {
             var testPoolIp = Environment.GetEnvironmentVariable("TEST_POOL_IP");
-            return testPoolIp != null ? testPoolIp : "127.0.0.1";
+            return testPoolIp ?? "127.0.0.1";
         }
 
         public static string GetUserHomePath()
@@ -39,6 +39,5 @@ namespace Hyperledger.Indy.Test
         {
             return Path.Combine(GetTmpPath(), filename);
         }
-
     }
 }

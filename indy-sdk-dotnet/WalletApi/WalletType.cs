@@ -95,8 +95,9 @@ namespace Hyperledger.Indy.WalletApi
                 return Create(name, config, credentials);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine("Creating handler error: " + ex.Message);
                 return ErrorCode.CommonInvalidState;
             }
         }
@@ -161,7 +162,8 @@ namespace Hyperledger.Indy.WalletApi
             {
                 var wallet = GetWalletByHandle(handle);
 
-                var result = wallet.Get(key, out var value);
+                string value;
+                var result = wallet.Get(key, out value);
 
                 if (result != ErrorCode.Success)
                     return result;
@@ -191,7 +193,8 @@ namespace Hyperledger.Indy.WalletApi
             {
                 var wallet = GetWalletByHandle(handle);
 
-                var result = wallet.GetNotExpired(key, out var value);
+                string value;
+                var result = wallet.GetNotExpired(key, out value);
 
                 if (result != ErrorCode.Success)
                     return result;
@@ -219,7 +222,8 @@ namespace Hyperledger.Indy.WalletApi
             {
                 var wallet = GetWalletByHandle(handle);
 
-                var result = wallet.List(keyPrefix, out var value);
+                string value;
+                var result = wallet.List(keyPrefix, out value);
 
                 if (result != ErrorCode.Success)
                     return result;
@@ -301,10 +305,10 @@ namespace Hyperledger.Indy.WalletApi
         /// <returns>A pointer to the unmanaged memory.</returns>
         private IntPtr MarshalToUnmanaged(string value)
         {
-            var buffer = Encoding.UTF8.GetBytes(value); // not null terminated
+            byte[] buffer = Encoding.UTF8.GetBytes(value); // not null terminated
             Array.Resize(ref buffer, buffer.Length + 1);
             buffer[buffer.Length - 1] = 0; // terminating 0
-            var unmanagedMemoryPtr = Marshal.AllocHGlobal(buffer.Length);
+            IntPtr unmanagedMemoryPtr = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, unmanagedMemoryPtr, buffer.Length);
             return unmanagedMemoryPtr;
         }

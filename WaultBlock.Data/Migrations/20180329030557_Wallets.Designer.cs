@@ -11,9 +11,10 @@ using WaultBlock.Data;
 namespace WaultBlock.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180329030557_Wallets")]
+    partial class Wallets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,15 +182,19 @@ namespace WaultBlock.Data.Migrations
 
             modelBuilder.Entity("WaultBlock.Models.WaultWallet", b =>
                 {
-                    b.Property<string>("Name");
-
-                    b.Property<string>("UserId");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<double?>("FreshnessDuration");
 
                     b.Property<bool>("IsOpen");
 
-                    b.HasKey("Name", "UserId");
+                    b.Property<string>("Name");
+
+                    b.Property<string>("UserId")
+                        .IsRequired();
+
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -203,17 +208,13 @@ namespace WaultBlock.Data.Migrations
 
                     b.Property<DateTime>("TimeCreated");
 
-                    b.Property<string>("UserId")
-                        .IsRequired();
-
                     b.Property<string>("Value");
 
-                    b.Property<string>("WaultWalletName")
-                        .IsRequired();
+                    b.Property<Guid>("WaultWalletId");
 
                     b.HasKey("Key");
 
-                    b.HasIndex("WaultWalletName", "UserId");
+                    b.HasIndex("WaultWalletId");
 
                     b.ToTable("WaultWalletRecords");
                 });
@@ -275,7 +276,7 @@ namespace WaultBlock.Data.Migrations
                 {
                     b.HasOne("WaultBlock.Models.WaultWallet", "WaultWallet")
                         .WithMany("Records")
-                        .HasForeignKey("WaultWalletName", "UserId")
+                        .HasForeignKey("WaultWalletId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

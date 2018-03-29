@@ -31,12 +31,12 @@ ARG python3_indy_crypto_ver=0.2.0
 ARG indy_crypto_ver=0.2.0
 
 RUN apt-get update -y && apt-get install -y \
-        indy-plenum=${indy_plenum_ver} \
-        indy-anoncreds=${indy_anoncreds_ver} \
-        indy-node=${indy_node_ver} \
-        python3-indy-crypto=${python3_indy_crypto_ver} \
-        libindy-crypto=${indy_crypto_ver} \
-        vim
+		indy-plenum=${indy_plenum_ver} \
+		indy-anoncreds=${indy_anoncreds_ver} \
+		indy-node=${indy_node_ver} \
+		python3-indy-crypto=${python3_indy_crypto_ver} \
+		libindy-crypto=${indy_crypto_ver} \
+		vim
 
 RUN echo '[supervisord]\n\
 logfile = /tmp/supervisord.log\n\

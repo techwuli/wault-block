@@ -1,0 +1,25 @@
+﻿@model IEnumerable<WaultWallet>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Claims</h2>
+
+<a asp-action="Create" asp-controller="Claims">Create</a>
+
+@foreach (var wallet in Model)
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">@wallet.Name</div>
+        </div>
+        <div class="panel-body">
+            <ul>
+                @foreach (var record in wallet.Records)
+                {
+                    <li>@record.Value</li>
+                }
+            </ul>
+        </div>
+    </div>
+}

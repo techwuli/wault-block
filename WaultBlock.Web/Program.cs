@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using WaultBlock.Data;
+using WaultBlock.Identities;
 
 namespace WaultBlock.Web
 {
@@ -14,7 +10,10 @@ namespace WaultBlock.Web
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            var host = BuildWebHost(args);
+            var dbContext = host.Services.CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            WaultIdentityService.RegisterWalletType(dbContext);
+            host.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

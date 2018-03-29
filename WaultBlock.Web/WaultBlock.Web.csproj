@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WaultBlock.Data\WaultBlock.Data.csproj" />
-    <ProjectReference Include="..\WaultBlock.Indy\WaultBlock.Indy.csproj" />
+    <ProjectReference Include="..\WaultBlock.Identities\WaultBlock.Identities.csproj" />
     <ProjectReference Include="..\WaultBlock.Models\WaultBlock.Models.csproj" />
   </ItemGroup>
 

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WaultBlock.Data;
+using WaultBlock.Identities;
 using WaultBlock.Models;
 using WaultBlock.Web.Services;
 
@@ -39,6 +40,7 @@ namespace WaultBlock.Web
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IWaultIdentityService, WaultIdentityService>();
 
             services.AddMvc();
         }
@@ -62,6 +64,7 @@ namespace WaultBlock.Web
             app.UseAuthentication();
 
             app.UseMvcWithDefaultRoute();
+
         }
     }
 }

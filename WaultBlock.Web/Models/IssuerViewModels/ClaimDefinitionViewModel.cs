@@ -15,7 +15,7 @@ namespace WaultBlock.Web.Models.IssuerViewModels
 
         public string UserName { get; set; }
 
-        public string Published { get; set; }
+        public bool Published { get; set; }
 
         public string[] FieldArray
         {

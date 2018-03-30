@@ -21,7 +21,7 @@ namespace WaultBlock.Models
         [Required]
         public string Name { get; set; }
 
-        public string Value { get; set; }
+        public string Fields { get; set; }
 
         public virtual ApplicationUser User { get; set; }
     }

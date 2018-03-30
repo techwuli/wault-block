@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +27,21 @@ namespace WaultBlock.Web.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
-            var result = await _identityService.GetClaimDefinitionsAsync(_userManager.GetUserId(User));
+            var defs = await _identityService.GetClaimDefinitionsAsync(_userManager.GetUserId(User));
+
+            var result = new List<ClaimDefinitionViewModel>();
+
+            foreach (var def in defs)
+            {
+                var model = new ClaimDefinitionViewModel
+                {
+                    Fields = def.Fields,
+                    Name = def.Name,
+                    UserName = def.User.UserName,
+                    Published = def.Published
+                };
+                result.Add(model);
+            }
             return View(result);
         }
 

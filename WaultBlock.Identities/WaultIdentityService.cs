@@ -90,13 +90,13 @@ namespace WaultBlock.Identities
             return await query.ToListAsync();
         }
 
-        public async Task<ClaimDefinition> CreateClaimDefinitionAsync(string userId, string name, string value)
+        public async Task<ClaimDefinition> CreateClaimDefinitionAsync(string userId, string name, string fields)
         {
             var claimDefinition = new ClaimDefinition
             {
                 Id = Guid.NewGuid(),
                 Name = name,
-                Value = value,
+                Fields = fields,
                 Published = false,
                 UserId = userId
             };

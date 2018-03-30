@@ -35,7 +35,10 @@ namespace WaultBlock.Identities
         public ErrorCode Get(string key, out string value)
         {
             value = null;
-            var record = _dbContext.WaultWalletRecords.FirstOrDefault(p => p.Key == key && p.WaultWalletName == _waultWallet.Name);
+            var record = _dbContext.WaultWalletRecords.FirstOrDefault(p =>
+                        p.Key == key &&
+                        p.WaultWalletName == _waultWallet.Name &&
+                        p.UserId == _waultWallet.UserId);
             if (record == null)
             {
                 return ErrorCode.WalletNotFoundError;
@@ -62,7 +65,10 @@ namespace WaultBlock.Identities
         {
             value = null;
 
-            var record = _dbContext.WaultWalletRecords.FirstOrDefault(p => p.Key == key && p.WaultWalletName == _waultWallet.Name);
+            var record = _dbContext.WaultWalletRecords.FirstOrDefault(p =>
+                        p.Key == key &&
+                        p.WaultWalletName == _waultWallet.Name &&
+                        p.UserId == _waultWallet.UserId);
             if (record == null)
             {
                 return ErrorCode.WalletNotFoundError;
@@ -141,7 +147,8 @@ namespace WaultBlock.Identities
                 Key = key,
                 Value = value,
                 TimeCreated = DateTime.UtcNow,
-                WaultWalletName = _waultWallet.Name
+                WaultWalletName = _waultWallet.Name,
+                UserId = _waultWallet.UserId
             };
 
             InsertOrUpdateRecord(record);

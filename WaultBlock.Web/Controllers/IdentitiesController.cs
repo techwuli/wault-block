@@ -10,7 +10,7 @@ using WaultBlock.Web.Models.IdentitiesViewModels;
 namespace WaultBlock.Web.Controllers
 {
     [Authorize]
-    [Route("Claims")]
+    [Route("Identities")]
     public class IdentitiesController : Controller
     {
         private UserManager<ApplicationUser> _userManager;
@@ -31,14 +31,14 @@ namespace WaultBlock.Web.Controllers
             return View(wallets);
         }
 
-        [HttpGet("Create")]
-        public IActionResult Create()
+        [HttpGet("Wallets/Create")]
+        public IActionResult CreateWallet()
         {
             return View();
         }
 
-        [HttpPost("Create")]
-        public async Task<IActionResult> Create(CreateWalletViewModel model)
+        [HttpPost("Wallets/Create")]
+        public async Task<IActionResult> CreateWallet(CreateWalletViewModel model)
         {
             if (!ModelState.IsValid)
             {

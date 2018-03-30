@@ -7,5 +7,7 @@ namespace WaultBlock.Models
     public class ApplicationUser : IdentityUser
     {
         public virtual ICollection<WaultWallet> WaultWallets { get; set; }
+
+        public virtual ICollection<ClaimDefinition> ClaimDefinitions { get; set; }
     }
 }

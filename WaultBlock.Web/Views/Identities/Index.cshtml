@@ -3,9 +3,11 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Claims</h2>
+<div class="page-header">
+    <h1>Identities</h1>
+</div>
 
-<a asp-action="Create" asp-controller="Claims">Create</a>
+<a asp-action="CreateWallet" asp-controller="Identities" class="btn btn-default">Create Wallet</a>
 
 @foreach (var wallet in Model)
 {

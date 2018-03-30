@@ -10,6 +10,8 @@ namespace WaultBlock.Data
 
         public virtual DbSet<WaultWalletRecord> WaultWalletRecords { get; set; }
 
+        public virtual DbSet<ClaimDefinition> ClaimDefinitions { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -27,6 +29,7 @@ namespace WaultBlock.Data
             builder.Entity<WaultWallet>()
                 .HasMany(p => p.Records).WithOne(p => p.WaultWallet).HasForeignKey(p => new { p.WaultWalletName, p.UserId });
             builder.Entity<WaultWallet>().HasOne(p => p.User).WithMany(p => p.WaultWallets).HasForeignKey(p => p.UserId);
+            builder.Entity<ClaimDefinition>().HasOne(p => p.User).WithMany(p => p.ClaimDefinitions).HasForeignKey(p => p.UserId);
         }
     }
 }

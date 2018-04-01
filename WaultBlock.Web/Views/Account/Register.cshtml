@@ -26,6 +26,18 @@
                 <input asp-for="ConfirmPassword" class="form-control" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="AgentId"></label>
+                <select asp-for="AgentId">
+                    <option value="">Register as An Agent</option>
+                    @foreach (var agent in (List<ApplicationUser>)ViewData["Agents"])
+                    {
+                        <option value="@agent.Id">@agent.UserName</option>
+                    }
+                </select>
+            </div>
+
             <button type="submit" class="btn btn-default">Register</button>
         </form>
     </div>

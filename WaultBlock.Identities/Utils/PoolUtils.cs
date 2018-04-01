@@ -11,7 +11,6 @@ namespace WaultBlock.Identities.Utils
 
         public static async Task<Pool> CreateAndOpenPoolLedgerAsync()
         {
-
             var poolName = CreatePoolLedgerConfig();
             var openPoolLedgerConfig = "{\"refresh_on_open\":true}";
 

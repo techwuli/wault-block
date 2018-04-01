@@ -19,9 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaultBlock.Data", "WaultBlo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaultBlock.Models", "WaultBlock.Models\WaultBlock.Models.csproj", "{EDDAC863-B029-49C6-809B-50F9D4B4CF71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaultBlock.Identities", "WaultBlock.Identities\WaultBlock.Identities.csproj", "{48C48171-5C37-4B4B-96F6-B629A2CC0D83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaultBlock.Identities", "WaultBlock.Identities\WaultBlock.Identities.csproj", "{48C48171-5C37-4B4B-96F6-B629A2CC0D83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaultBlock.Utils", "WaultBlock.Utils\WaultBlock.Utils.csproj", "{FD4A1EFE-291F-422B-8506-3D0AFF776CE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaultBlock.Utils", "WaultBlock.Utils\WaultBlock.Utils.csproj", "{FD4A1EFE-291F-422B-8506-3D0AFF776CE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaultBlock.Sample", "WaultBlock.Sample\WaultBlock.Sample.csproj", "{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,6 +119,18 @@ Global
 		{FD4A1EFE-291F-422B-8506-3D0AFF776CE2}.Release|x64.Build.0 = Release|Any CPU
 		{FD4A1EFE-291F-422B-8506-3D0AFF776CE2}.Release|x86.ActiveCfg = Release|Any CPU
 		{FD4A1EFE-291F-422B-8506-3D0AFF776CE2}.Release|x86.Build.0 = Release|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Debug|x64.Build.0 = Debug|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Debug|x86.Build.0 = Debug|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Release|x64.ActiveCfg = Release|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Release|x64.Build.0 = Release|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Release|x86.ActiveCfg = Release|Any CPU
+		{979F471D-54C6-4EAF-B4C6-84CDD67AE66C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

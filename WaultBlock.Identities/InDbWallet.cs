@@ -12,11 +12,11 @@ namespace WaultBlock.Identities
     public class InDbWallet : ICustomWallet
     {
         private ApplicationDbContext _dbContext;
-        private WaultWallet _waultWallet;
+        private WalletData _walletData;
 
-        public InDbWallet(WaultWallet waultWallet, ApplicationDbContext dbContext)
+        public InDbWallet(WalletData walletData, ApplicationDbContext dbContext)
         {
-            _waultWallet = waultWallet;
+            _walletData = walletData;
             _dbContext = dbContext;
         }
 
@@ -35,10 +35,10 @@ namespace WaultBlock.Identities
         public ErrorCode Get(string key, out string value)
         {
             value = null;
-            var record = _dbContext.WaultWalletRecords.FirstOrDefault(p =>
+            var record = _dbContext.WalletRecords.FirstOrDefault(p =>
                         p.Key == key &&
-                        p.WaultWalletName == _waultWallet.Name &&
-                        p.UserId == _waultWallet.UserId);
+                        p.WalletName == _walletData.Name &&
+                        p.UserId == _walletData.UserId);
             if (record == null)
             {
                 return ErrorCode.WalletNotFoundError;
@@ -65,17 +65,17 @@ namespace WaultBlock.Identities
         {
             value = null;
 
-            var record = _dbContext.WaultWalletRecords.FirstOrDefault(p =>
+            var record = _dbContext.WalletRecords.FirstOrDefault(p =>
                         p.Key == key &&
-                        p.WaultWalletName == _waultWallet.Name &&
-                        p.UserId == _waultWallet.UserId);
+                        p.WalletName == _walletData.Name &&
+                        p.UserId == _walletData.UserId);
             if (record == null)
             {
                 return ErrorCode.WalletNotFoundError;
             }
 
             var recordAge = DateTime.UtcNow - record.TimeCreated;
-            if (recordAge.Seconds > _waultWallet.FreshnessDuration)
+            if (recordAge.Seconds > _walletData.FreshnessDuration)
             {
                 return ErrorCode.WalletNotFoundError;
             }
@@ -108,7 +108,7 @@ namespace WaultBlock.Identities
         /// </remarks>
         public ErrorCode List(string keyPrefix, out string valuesJson)
         {
-            var records = _dbContext.WaultWalletRecords.Where(p => p.Key.StartsWith(keyPrefix)).ToList();
+            var records = _dbContext.WalletRecords.Where(p => p.Key.StartsWith(keyPrefix)).ToList();
             var valuesArray = new JArray();
             foreach (var record in records)
             {
@@ -142,13 +142,13 @@ namespace WaultBlock.Identities
         /// <exception cref="System.NotImplementedException"></exception>
         public ErrorCode Set(string key, string value)
         {
-            var record = new WaultWalletRecord
+            var record = new WalletRecord
             {
                 Key = key,
                 Value = value,
                 TimeCreated = DateTime.UtcNow,
-                WaultWalletName = _waultWallet.Name,
-                UserId = _waultWallet.UserId
+                WalletName = _walletData.Name,
+                UserId = _walletData.UserId
             };
 
             InsertOrUpdateRecord(record);
@@ -158,21 +158,21 @@ namespace WaultBlock.Identities
 
         internal void Close()
         {
-            var wallet = _dbContext.WaultWallets.FirstOrDefault(p => p.Name == _waultWallet.Name);
-            if (wallet != null)
+            var walletData = _dbContext.WalletDatas.FirstOrDefault(p => p.Name == _walletData.Name);
+            if (walletData != null)
             {
-                wallet.IsOpen = false;
-                _dbContext.Update(wallet);
+                walletData.IsOpen = false;
+                _dbContext.Update(walletData);
                 _dbContext.SaveChanges();
             }
         }
 
-        private void InsertOrUpdateRecord(WaultWalletRecord record)
+        private void InsertOrUpdateRecord(WalletRecord record)
         {
-            var existedRecord = _dbContext.WaultWalletRecords
+            var existedRecord = _dbContext.WalletRecords
                                           .FirstOrDefault(
                                                 p => p.Key == record.Key &&
-                                                     p.WaultWalletName == record.WaultWalletName);
+                                                     p.WalletName == record.WalletName);
             if (existedRecord != null)
             {
                 _dbContext.Remove(existedRecord);

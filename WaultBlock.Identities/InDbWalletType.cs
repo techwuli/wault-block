@@ -29,17 +29,17 @@ namespace WaultBlock.Identities
 
         public override ErrorCode Close(int walletHandle)
         {
-            InDbWallet indyWallet;
+            InDbWallet wallet;
             try
             {
-                indyWallet = (InDbWallet)GetWalletByHandle(walletHandle);
+                wallet = (InDbWallet)GetWalletByHandle(walletHandle);
             }
             catch (Exception)
             {
                 return ErrorCode.WalletInvalidHandle;
             }
 
-            indyWallet.Close();
+            wallet.Close();
             _openedWallets.Remove(walletHandle);
             return ErrorCode.Success;
         }
@@ -63,7 +63,7 @@ namespace WaultBlock.Identities
 
             var credentials = ParseCredentials(credentialsString);
 
-            if (_dbContext.WaultWallets.Any(p => p.Name == name && p.UserId == credentials.UserId))
+            if (_dbContext.WalletDatas.Any(p => p.Name == name && p.UserId == credentials.UserId))
             {
                 return ErrorCode.WalletAlreadyExistsError;
             }
@@ -80,7 +80,7 @@ namespace WaultBlock.Identities
                 }
             }
 
-            var wallet = new WaultWallet
+            var walletData = new WalletData
             {
                 FreshnessDuration = freshnessDuration,
                 Name = name,
@@ -88,7 +88,7 @@ namespace WaultBlock.Identities
                 IsOpen = false
             };
 
-            _dbContext.WaultWallets.Add(wallet);
+            _dbContext.WalletDatas.Add(walletData);
             _dbContext.SaveChanges();
 
             return ErrorCode.Success;
@@ -115,7 +115,7 @@ namespace WaultBlock.Identities
 
             var credentialObj = ParseCredentials(credentialsString);
 
-            var wallet = _dbContext.WaultWallets
+            var wallet = _dbContext.WalletDatas
                 .Include(p => p.Records)
                 .FirstOrDefault(p => p.Name == name && p.UserId == credentialObj.UserId);
 
@@ -128,13 +128,22 @@ namespace WaultBlock.Identities
             {
                 return ErrorCode.CommonInvalidState;
             }
-            _dbContext.WaultWalletRecords.RemoveRange(wallet.Records);
-            _dbContext.WaultWallets.Remove(wallet);
+            _dbContext.WalletRecords.RemoveRange(wallet.Records);
+            _dbContext.WalletDatas.Remove(wallet);
             _dbContext.SaveChanges();
 
             return ErrorCode.Success;
         }
 
+        /// <summary>
+        /// Opens the specified Wallet.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="config">The configuration.</param>
+        /// <param name="runtimeConfig">The runtime configuration.</param>
+        /// <param name="credentialsString">The credentials string.</param>
+        /// <param name="walletHandle">The wallet handle.</param>
+        /// <returns></returns>
         public override ErrorCode Open(string name, string config, string runtimeConfig, string credentialsString, out int walletHandle)
         {
             ParamsGuard.NotNullOrEmpty(name, nameof(name));
@@ -142,24 +151,27 @@ namespace WaultBlock.Identities
             var credentialObj = ParseCredentials(credentialsString);
 
             walletHandle = -1;
-            var wallet = _dbContext.WaultWallets.FirstOrDefault(p => p.Name == name && p.UserId == credentialObj.UserId);
-            if (wallet == null)
+            var walletData = _dbContext.WalletDatas.FirstOrDefault(p => p.Name == name && p.UserId == credentialObj.UserId);
+            if (walletData == null)
             {
                 return ErrorCode.CommonInvalidState;
             }
 
-            if (wallet.IsOpen)
+            if (walletData.IsOpen &&
+                walletData.LastOpened.HasValue &&
+                walletData.FreshnessDuration > (DateTime.UtcNow - walletData.LastOpened.Value).Seconds)
             {
                 return ErrorCode.WalletAlreadyOpenedError;
             }
 
-            wallet.IsOpen = true;
-            _dbContext.Update(wallet);
+            walletData.IsOpen = true;
+            walletData.LastOpened = DateTime.UtcNow;
+            _dbContext.Update(walletData);
             _dbContext.SaveChanges();
 
             walletHandle = GetNextWalletHandle();
 
-            var indyWallet = new InDbWallet(wallet, _dbContext);
+            var indyWallet = new InDbWallet(walletData, _dbContext);
             _openedWallets.Add(walletHandle, indyWallet);
 
             return ErrorCode.Success;

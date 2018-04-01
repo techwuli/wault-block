@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WaultBlock.Models
 {
-    [Table("WaultWalletRecords")]
-    public class WaultWalletRecord
+    [Table("WalletRecords")]
+    public class WalletRecord
     {
         [Key]
         public string Key { get; set; }
 
         [Required]
-        public string WaultWalletName { get; set; }
+        public string WalletName { get; set; }
 
         [Required]
         public string UserId { get; set; }
@@ -21,6 +21,6 @@ namespace WaultBlock.Models
         [Required]
         public DateTime TimeCreated { get; set; }
 
-        public virtual WaultWallet WaultWallet { get; set; }
+        public virtual WalletData WalletData { get; set; }
     }
 }

@@ -1,0 +1,48 @@
+﻿@model PublishClaimDefinitionViewModel
+@{
+    ViewData["Title"] = "PublishClaimDefinition";
+}
+
+<div class="page-header">
+    <h1>Publish Claim Definition</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label>Name</label>
+                <span>@ViewBag.ClaimDefinition.Name</span>
+            </div>
+
+            <div class="form-group">
+                <label>Name</label>
+                <span>@ViewBag.ClaimDefinition.Fields</span>
+            </div>
+
+            <div class="form-group">
+                <label>Name</label>
+                <span>@ViewBag.ClaimDefinition.ProofFields</span>
+            </div>
+
+            <div class="form-group">
+                <label>Wallet</label>
+                <select name="walletName">
+                    @foreach (var wallet in ViewBag.Wallets)
+                    {
+                        <option value="@wallet.Name">@wallet.Name</option>
+                    }
+                </select>
+            </div>
+
+            <hr />
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-default">Publish</button>
+            </div>
+
+        </form>
+    </div>
+</div>

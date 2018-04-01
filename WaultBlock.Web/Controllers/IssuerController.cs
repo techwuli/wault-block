@@ -1,5 +1,5 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,7 +14,6 @@ namespace WaultBlock.Web.Controllers
     [Route("issuer")]
     public class IssuerController : Controller
     {
-
         private IWaultIdentityService _identityService;
         private UserManager<ApplicationUser> _userManager;
 
@@ -22,27 +21,6 @@ namespace WaultBlock.Web.Controllers
         {
             _identityService = identityService;
             _userManager = userManager;
-        }
-
-        [HttpGet("")]
-        public async Task<IActionResult> Index()
-        {
-            var defs = await _identityService.GetClaimDefinitionsAsync(_userManager.GetUserId(User));
-
-            var result = new List<ClaimDefinitionViewModel>();
-
-            foreach (var def in defs)
-            {
-                var model = new ClaimDefinitionViewModel
-                {
-                    Fields = def.Fields,
-                    Name = def.Name,
-                    UserName = def.User.UserName,
-                    Published = def.Published
-                };
-                result.Add(model);
-            }
-            return View(result);
         }
 
         [HttpGet("ClaimDefinitions/Create")]
@@ -68,6 +46,55 @@ namespace WaultBlock.Web.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet("ClaimDefinitions/{id}/Publish")]
+        public async Task<IActionResult> PublishClaimDefinition(Guid id)
+        {
+            var claimDefinition = await _identityService.GetClaimDefinitionAsync(id);
+            if (claimDefinition == null)
+            {
+                return NotFound();
+            }
+            var wallets = await _identityService.GetWalletDatasAsync(_userManager.GetUserId(User));
+            ViewBag.Wallets = wallets;
+            ViewBag.ClaimDefinition = ClaimDefinitionViewModel.Create(claimDefinition);
+            return View();
+        }
+
+        [HttpPost("ClaimDefinitions/{id}/Publish")]
+        public async Task<IActionResult> PublishClaimDefinition(Guid id, PublishClaimDefinitionViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _identityService.PublishClaimDefinitionAsync(id, model.WalletName, _userManager.GetUserId(User));
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(string.Empty, e.Message);
+                }
+            }
+
+            var claimDefinition = await _identityService.GetClaimDefinitionAsync(id);
+            if (claimDefinition == null)
+            {
+                return NotFound();
+            }
+            var wallets = await _identityService.GetWalletDatasAsync(_userManager.GetUserId(User));
+            ViewBag.Wallets = wallets;
+            ViewBag.ClaimDefinition = ClaimDefinitionViewModel.Create(claimDefinition);
+            return View(model);
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> Index()
+        {
+            var defs = await _identityService.GetClaimDefinitionsAsync(_userManager.GetUserId(User));
+            var result = defs.Select(ClaimDefinitionViewModel.Create).ToList();
+            return View(result);
         }
     }
 }

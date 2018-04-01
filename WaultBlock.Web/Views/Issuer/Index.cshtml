@@ -6,25 +6,26 @@
 <a asp-controller="Issuer" asp-action="CreateClaimDefinition" class="btn btn-default">Create</a>
 
 <div class="panel-container">
-@foreach(var def in Model)
-{
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            @def.Name
+    @foreach (var def in Model)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                @def.Name
+            </div>
+            <div class="panel-body">
+                <ul>
+                    @foreach (var field in def.FieldArray)
+                    {
+                        <li>@field</li>
+                    }
+                </ul>
+            </div>
+            <div class="panel-footer">
+                @if (!def.Published)
+                {
+                    <a href="Issuer/ClaimDefinitions/@def.Id/Publish" class="btn btn-default">Publish</a>
+                }
+            </div>
         </div>
-        <div class="panel-body">
-            <ul>
-            @foreach (var field in def.FieldArray)
-            {
-                <li>@field</li>
-            }
-            </ul>
-        </div>
-        <div class="panel-footer">
-            @if(!def.Published){
-                <button class="btn btn-default">Publish</button>
-            }
-        </div>
-    </div>
-}
+    }
 </div>

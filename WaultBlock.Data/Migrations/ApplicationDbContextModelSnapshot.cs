@@ -184,10 +184,13 @@ namespace WaultBlock.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Fields");
+                    b.Property<string>("Fields")
+                        .IsRequired();
 
                     b.Property<string>("Name")
                         .IsRequired();
+
+                    b.Property<string>("ProofFields");
 
                     b.Property<bool>("Published");
 
@@ -201,7 +204,7 @@ namespace WaultBlock.Data.Migrations
                     b.ToTable("ClaimDefinitions");
                 });
 
-            modelBuilder.Entity("WaultBlock.Models.WaultWallet", b =>
+            modelBuilder.Entity("WaultBlock.Models.WalletData", b =>
                 {
                     b.Property<string>("Name");
 
@@ -211,14 +214,16 @@ namespace WaultBlock.Data.Migrations
 
                     b.Property<bool>("IsOpen");
 
+                    b.Property<DateTime?>("LastOpened");
+
                     b.HasKey("Name", "UserId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("WaultWallets");
+                    b.ToTable("WalletDatas");
                 });
 
-            modelBuilder.Entity("WaultBlock.Models.WaultWalletRecord", b =>
+            modelBuilder.Entity("WaultBlock.Models.WalletRecord", b =>
                 {
                     b.Property<string>("Key")
                         .ValueGeneratedOnAdd();
@@ -230,14 +235,14 @@ namespace WaultBlock.Data.Migrations
 
                     b.Property<string>("Value");
 
-                    b.Property<string>("WaultWalletName")
+                    b.Property<string>("WalletName")
                         .IsRequired();
 
                     b.HasKey("Key");
 
-                    b.HasIndex("WaultWalletName", "UserId");
+                    b.HasIndex("WalletName", "UserId");
 
-                    b.ToTable("WaultWalletRecords");
+                    b.ToTable("WalletRecords");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -293,19 +298,19 @@ namespace WaultBlock.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("WaultBlock.Models.WaultWallet", b =>
+            modelBuilder.Entity("WaultBlock.Models.WalletData", b =>
                 {
                     b.HasOne("WaultBlock.Models.ApplicationUser", "User")
-                        .WithMany("WaultWallets")
+                        .WithMany("WalletDatas")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("WaultBlock.Models.WaultWalletRecord", b =>
+            modelBuilder.Entity("WaultBlock.Models.WalletRecord", b =>
                 {
-                    b.HasOne("WaultBlock.Models.WaultWallet", "WaultWallet")
+                    b.HasOne("WaultBlock.Models.WalletData", "WalletData")
                         .WithMany("Records")
-                        .HasForeignKey("WaultWalletName", "UserId")
+                        .HasForeignKey("WalletName", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

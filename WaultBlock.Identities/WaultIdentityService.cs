@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using WaultBlock.Data;
-using WaultBlock.Utils;
 
 namespace WaultBlock.Identities
 {
@@ -16,7 +15,7 @@ namespace WaultBlock.Identities
         {
             _dbContext = dbContext;
             _configuration = configuration;
-            StorageUtils.CleanupStorage();
+            // StorageUtils.CleanupStorage();
             Console.WriteLine("=== WaultIdentityService started ===");
         }
 
@@ -25,7 +24,7 @@ namespace WaultBlock.Identities
             if (!_disposing)
             {
                 _disposing = true;
-                StorageUtils.CleanupStorage();
+                // StorageUtils.CleanupStorage();
                 Console.WriteLine("=== WaultIdentityService destroyed ===");
             }
         }

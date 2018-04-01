@@ -9,7 +9,7 @@ namespace WaultBlock.Identities
     {
         #region wallets
 
-        Task<WalletData> CreateWalletAsync(ApplicationUser user, string agentId = null);
+        Task CreateWalletAsync(ApplicationUser user, string agentId = null);
 
         Task<IEnumerable<WalletData>> GetWalletDatasAsync(string userId);
 

@@ -18,7 +18,6 @@ namespace WaultBlock.Data
         }
 
         public virtual DbSet<ClaimDefinition> ClaimDefinitions { get; set; }
-        public virtual DbSet<WalletRecord> WalletRecords { get; set; }
         public virtual DbSet<WalletData> WalletDatas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -30,8 +29,7 @@ namespace WaultBlock.Data
 
             builder.Entity<WalletData>()
                 .HasKey(p => new { p.Name, p.UserId });
-            builder.Entity<WalletData>()
-                .HasMany(p => p.Records).WithOne(p => p.WalletData).HasForeignKey(p => new { p.WalletName, p.UserId });
+           
             builder.Entity<WalletData>().HasOne(p => p.User).WithMany(p => p.WalletDatas).HasForeignKey(p => p.UserId);
             builder.Entity<ClaimDefinition>().HasOne(p => p.User).WithMany(p => p.ClaimDefinitions).HasForeignKey(p => p.UserId);
         }

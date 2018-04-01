@@ -66,7 +66,7 @@ namespace WaultBlock.Identities
             Wallet indyWallet = null;
             try
             {
-                indyWallet = await OpenWalletAsync(walletName, null, "{\"userId\":\"" + userId + "\"}");
+                indyWallet = await Wallet.OpenWalletAsync(walletName, null, null);
                 if (indyWallet == null)
                 {
                     throw new Exception("Wallet can not be opened.");

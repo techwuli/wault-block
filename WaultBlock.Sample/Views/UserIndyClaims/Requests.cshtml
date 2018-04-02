@@ -1,12 +1,9 @@
-﻿@model IEnumerable<WaultBlock.Models.UserIndyClaim>
-
-@{
-    ViewData["Title"] = "Index";
-}
+﻿@model IEnumerable<UserIndyClaim>
 
 <div class="page-header">
-    <h2>My Claims</h2>
+    <h2>Requests</h2>
 </div>
+
 
 <table class="table">
     <thead>
@@ -15,7 +12,7 @@
                 Name
             </th>
             <th>
-                Issuer
+                User
             </th>
             <th>
                 Status
@@ -23,6 +20,7 @@
             <th>
                 Last Updated
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -33,7 +31,7 @@
                     @Html.DisplayFor(modelItem => item.ClaimDefinition.CredentialSchema.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ClaimDefinition.User.UserName)
+                    @Html.DisplayFor(modelItem => item.User.UserName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Status)
@@ -41,7 +39,13 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.LastUpdated)
                 </td>
+                <td>
+                    <a href="/userindyclaims/@item.Id/Accept">Accept</a>
+                </td>
             </tr>
         }
+
     </tbody>
 </table>
+
+

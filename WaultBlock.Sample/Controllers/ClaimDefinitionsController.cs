@@ -169,8 +169,7 @@ namespace WaultBlock.Sample.Controllers
         [HttpGet("ClaimDefinitions/{id}/Apply")]
         public async Task<IActionResult> Apply(Guid id)
         {
-
-
+            await _identityService.ApplyClaimDefinitionAsync(_userManager.GetUserId(User), id);
             return RedirectToAction("Index", "UserIndyClaims");
         }
 

@@ -28,6 +28,7 @@ namespace WaultBlock.Identities
         Task<IEnumerable<ClaimDefinition>> GetClaimDefinitionsAsync(string userId = null);
 
         Task ApplyClaimDefinitionAsync(string userId, Guid claimDefinitionId);
+        Task AcceptClaimRequestAsync(string userId, Guid requestId, List<KeyValuePair<string, string>> attributeValues);
 
         #endregion claims
     }

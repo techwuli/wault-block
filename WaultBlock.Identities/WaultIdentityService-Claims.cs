@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Hyperledger.Indy.AnonCredsApi;
+using Hyperledger.Indy.CryptoApi;
 using Hyperledger.Indy.DidApi;
 using Hyperledger.Indy.LedgerApi;
+using Hyperledger.Indy.PoolApi;
 using Hyperledger.Indy.WalletApi;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WaultBlock.Identities.Utils;
 using WaultBlock.Models;
+using WaultBlock.Utils;
 
 namespace WaultBlock.Identities
 {
@@ -54,6 +58,14 @@ namespace WaultBlock.Identities
             }
         }
 
+        private async Task<JObject> GetSchemaAsync(Pool pool, string requesterDid, string creatorWalletDid, string schemaName, string schemaVersion)
+        {
+            var schemaData = JsonConvert.SerializeObject(new { name = schemaName, version = schemaVersion });
+            var getSchemaRequest = await Ledger.BuildGetSchemaRequestAsync(requesterDid, creatorWalletDid, schemaData);
+            var getSchemaResponse = await Ledger.SubmitRequestAsync(pool, getSchemaRequest);
+            return JObject.Parse(getSchemaResponse);
+        }
+
         public async Task<ClaimDefinition> CreateClaimDefinitionAsync(string userId, Guid credentialSchemaId)
         {
             var schema = await _dbContext.CredentialSchemas.Include(p => p.User).FirstOrDefaultAsync(p => p.Id == credentialSchemaId);
@@ -75,8 +87,8 @@ namespace WaultBlock.Identities
                     var getSchemaRequest = await Ledger.BuildGetSchemaRequestAsync(walletData.Did, schemaCreatorWalletData.Did, schemaData);
                     var getSchemaResponse = await Ledger.SubmitRequestAsync(pool, getSchemaRequest);
                     var schemaValue = JObject.Parse(getSchemaResponse).GetValue("result");
-                    var schemaClaimDefJson = await AnonCreds.IssuerCreateAndStoreClaimDefAsync(wallet, walletData.Did, schemaValue.ToString(), "CL", false);
-                    var claimDef = JObject.Parse(schemaClaimDefJson);
+                    var claimDefJson = await AnonCreds.IssuerCreateAndStoreClaimDefAsync(wallet, walletData.Did, schemaValue.ToString(), "CL", false);
+                    var claimDef = JObject.Parse(claimDefJson);
                     var claimDefRequest = await Ledger.BuildClaimDefTxnAsync(walletData.Did, claimDef.Value<int>("ref"), claimDef.Value<string>("signature_type"), claimDef.GetValue("data").ToString());
                     var result = await Ledger.SignAndSubmitRequestAsync(pool, wallet, walletData.Did, claimDefRequest);
 
@@ -128,49 +140,96 @@ namespace WaultBlock.Identities
         {
             var claimDefinition = await _dbContext.ClaimDefinitions.Include(p => p.CredentialSchema).FirstOrDefaultAsync(p => p.Id == claimDefinitionId);
 
-            var trustAnchorWalletData = await GetDefaultWalletDataAsync(claimDefinition.UserId);
-            var userWalletData = await GetDefaultWalletDataAsync(userId);
+            var issuerWalletData = await GetDefaultWalletDataAsync(claimDefinition.UserId);
+            var issuerWallet = await Wallet.OpenWalletAsync(issuerWalletData.Name, null, null);
 
+            var userWalletData = await GetDefaultWalletDataAsync(userId);
             var userWallet = await Wallet.OpenWalletAsync(userWalletData.Name, null, null);
-            var trustAnchorWallet = await Wallet.OpenWalletAsync(trustAnchorWalletData.Name, null, null);
+
+            var schemaCreatorWalletData = await GetDefaultWalletDataAsync(claimDefinition.CredentialSchema.UserId);
+
 
             try
             {
                 using (var pool = await PoolUtils.CreateAndOpenPoolLedgerAsync())
                 {
+                    var userIssuerDidResult = await Did.CreateAndStoreMyDidAsync(userWallet, "{}");
+                    var schema = await GetSchemaAsync(pool, issuerWalletData.Did, schemaCreatorWalletData.Did, claimDefinition.CredentialSchema.Name, claimDefinition.CredentialSchema.Version);
 
-                    var userFaberDidResult = await Did.CreateAndStoreMyDidAsync(userWallet, "{}");
+                    var transcriptClaimOfferJson = await AnonCreds.IssuerCreateClaimOfferAsync(issuerWallet, schema.GetValue("result").ToString(), issuerWalletData.Did, userIssuerDidResult.Did);
 
-                    var transcriptSchema = JsonConvert.SerializeObject(new { name = claimDefinition.CredentialSchema.Name, version = claimDefinition.CredentialSchema.Version });
-                    var claimOfferJson = await AnonCreds.IssuerCreateClaimOfferAsync(trustAnchorWallet, transcriptSchema, trustAnchorWalletData.Did, userFaberDidResult.Did);
+                    await AnonCreds.ProverStoreClaimOfferAsync(userWallet, transcriptClaimOfferJson);
 
-                    await AnonCreds.ProverStoreClaimOfferAsync(userWallet, claimOfferJson);
-                    var getSchemaRequest = await Ledger.BuildGetSchemaRequestAsync(userFaberDidResult.Did, trustAnchorWalletData.Did, transcriptSchema);
-                    var getSchemaResponse = await Ledger.SubmitRequestAsync(pool, getSchemaRequest);
-                    var transscriptSchemaObj = JObject.Parse(getSchemaResponse).GetValue("result");
-
-                    var userMasterSecretName = "user_master_secret";
+                    var userMasterSecretName = RandomUtils.RandomString(8);
                     await AnonCreds.ProverCreateMasterSecretAsync(userWallet, userMasterSecretName);
 
-                    var getClaimDefRequest = await Ledger.BuildGetClaimDefTxnAsync(userFaberDidResult.Did, transscriptSchemaObj.Value<int>("seqNo"), "CL", trustAnchorWalletData.Did);
+                    var getClaimDefRequest = await Ledger.BuildGetClaimDefTxnAsync(userIssuerDidResult.Did, schema.GetValue("result").Value<int>("seqNo"), "CL", issuerWalletData.Did);
                     var getClaimDefResponse = await Ledger.SubmitRequestAsync(pool, getClaimDefRequest);
-
                     var transcriptClaimDef = JObject.Parse(getClaimDefResponse).GetValue("result");
 
+                    var transcriptClaimRequestJson = await AnonCreds.ProverCreateAndStoreClaimReqAsync(userWallet, userIssuerDidResult.Did, transcriptClaimOfferJson, transcriptClaimDef.ToString(), userMasterSecretName);
 
-                    var transcriptClaimRequestJson = await AnonCreds.ProverCreateAndStoreClaimReqAsync(userWallet, userFaberDidResult.Did, claimOfferJson, transcriptClaimDef.ToString(), userMasterSecretName);
+                    var userIndyClaim = new UserIndyClaim
+                    {
+                        ClaimDefinitionId = claimDefinitionId,
+                        ClaimRequest = transcriptClaimRequestJson,
+                        Id = Guid.NewGuid(),
+                        LastUpdated = DateTime.UtcNow,
+                        Status = UserIndyClaimStatus.Requested,
+                        TimeCreated = DateTime.UtcNow,
+                        UserId = userId
+                    };
 
-
-
+                    _dbContext.UserIndyClaims.Add(userIndyClaim);
+                    await _dbContext.SaveChangesAsync();
                 }
             }
             finally
             {
                 await userWallet.CloseAsync();
-                await trustAnchorWallet.CloseAsync();
+                await issuerWallet.CloseAsync();
 
             }
 
         }
+
+        public async Task AcceptClaimRequestAsync(string userId, Guid requestId, List<KeyValuePair<string, string>> attributeValues)
+        {
+            var walletData = await GetDefaultWalletDataAsync(userId);
+            var wallet = await Wallet.OpenWalletAsync(walletData.Name, null, null);
+            try
+            {
+                var userIndyClaim = await _dbContext.UserIndyClaims
+                    .FirstOrDefaultAsync(p => p.Id == requestId);
+
+                var attributes = new JObject();
+                foreach (var attr in attributeValues)
+                {
+                    attributes.Add(attr.Key, attr.Value);
+                }
+
+                var claimJson = await AnonCreds.IssuerCreateClaimAsync(wallet, userIndyClaim.ClaimRequest, attributes.ToString(), -1);
+
+                userIndyClaim.ClaimResponse = claimJson.ClaimJson;
+                _dbContext.UpdateEntity(userIndyClaim);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                await wallet.CloseAsync();
+            }
+
+        }
+
+        private async Task<string> EncodeValue(string original, string key)
+        {
+            var encoded = await Crypto.AnonCryptAsync(key, Encoding.UTF8.GetBytes(original));
+            return Encoding.UTF8.GetString(encoded);
+        }
+
     }
 }

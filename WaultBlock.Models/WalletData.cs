@@ -19,6 +19,9 @@ namespace WaultBlock.Models
         [Key, Column(Order = 1)]
         public string UserId { get; set; }
 
+        [Required]
+        public bool IsDefault { get; set; }
+
         public virtual ApplicationUser User { get; set; }
     }
 }

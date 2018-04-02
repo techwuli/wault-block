@@ -11,9 +11,10 @@ using WaultBlock.Data;
 namespace WaultBlock.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180401181022_CredentialSchemasUpdate2")]
+    partial class CredentialSchemasUpdate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,7 +187,8 @@ namespace WaultBlock.Data.Migrations
 
                     b.Property<Guid>("CredentialSchemaId");
 
-                    b.Property<string>("UserId");
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
@@ -218,26 +220,6 @@ namespace WaultBlock.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("CredentialSchemas");
-                });
-
-            modelBuilder.Entity("WaultBlock.Models.UserIndyClaim", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("ClaimDefinitionId");
-
-                    b.Property<bool>("Issued");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClaimDefinitionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserIndyClaims");
                 });
 
             modelBuilder.Entity("WaultBlock.Models.WalletData", b =>
@@ -315,25 +297,14 @@ namespace WaultBlock.Data.Migrations
 
                     b.HasOne("WaultBlock.Models.ApplicationUser", "User")
                         .WithMany("ClaimDefinitions")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("WaultBlock.Models.CredentialSchema", b =>
                 {
                     b.HasOne("WaultBlock.Models.ApplicationUser", "User")
                         .WithMany("CredentialSchemas")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("WaultBlock.Models.UserIndyClaim", b =>
-                {
-                    b.HasOne("WaultBlock.Models.ClaimDefinition", "ClaimDefinition")
-                        .WithMany("UserIndyClaims")
-                        .HasForeignKey("ClaimDefinitionId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("WaultBlock.Models.ApplicationUser", "User")
-                        .WithMany()
                         .HasForeignKey("UserId");
                 });
 

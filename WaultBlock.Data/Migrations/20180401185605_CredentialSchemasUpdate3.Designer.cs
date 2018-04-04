@@ -7,14 +7,14 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 using WaultBlock.Data;
-using WaultBlock.Models;
 
 namespace WaultBlock.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180401185605_CredentialSchemasUpdate3")]
+    partial class CredentialSchemasUpdate3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,15 +228,7 @@ namespace WaultBlock.Data.Migrations
 
                     b.Property<Guid>("ClaimDefinitionId");
 
-                    b.Property<string>("ClaimRequest");
-
-                    b.Property<string>("ClaimResponse");
-
-                    b.Property<DateTime>("LastUpdated");
-
-                    b.Property<int>("Status");
-
-                    b.Property<DateTime>("TimeCreated");
+                    b.Property<bool>("Issued");
 
                     b.Property<string>("UserId");
 

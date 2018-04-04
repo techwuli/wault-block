@@ -1,7 +1,8 @@
 ﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using WaultBlock.Data;
-using WaultBlock.Utils;
+using WaultBlock.Models;
 
 namespace WaultBlock.Identities
 {
@@ -9,14 +10,16 @@ namespace WaultBlock.Identities
     {
         private IConfiguration _configuration;
         private ApplicationDbContext _dbContext;
+        private UserManager<ApplicationUser> _userManager;
 
         private bool _disposing;
 
-        public WaultIdentityService(ApplicationDbContext dbContext, IConfiguration configuration)
+        public WaultIdentityService(ApplicationDbContext dbContext, IConfiguration configuration, UserManager<ApplicationUser> userManager)
         {
             _dbContext = dbContext;
             _configuration = configuration;
-            StorageUtils.CleanupStorage();
+            _userManager = userManager;
+            // StorageUtils.CleanupStorage();
             Console.WriteLine("=== WaultIdentityService started ===");
         }
 
@@ -25,7 +28,7 @@ namespace WaultBlock.Identities
             if (!_disposing)
             {
                 _disposing = true;
-                StorageUtils.CleanupStorage();
+                // StorageUtils.CleanupStorage();
                 Console.WriteLine("=== WaultIdentityService destroyed ===");
             }
         }

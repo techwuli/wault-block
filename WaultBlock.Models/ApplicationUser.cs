@@ -9,5 +9,7 @@ namespace WaultBlock.Models
         public virtual ICollection<WalletData> WalletDatas { get; set; }
 
         public virtual ICollection<ClaimDefinition> ClaimDefinitions { get; set; }
+
+        public virtual ICollection<CredentialSchema> CredentialSchemas { get; set; }
     }
 }

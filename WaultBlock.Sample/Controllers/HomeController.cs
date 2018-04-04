@@ -1,17 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WaultBlock.Data;
 using WaultBlock.Sample.Models;
 
 namespace WaultBlock.Sample.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private ApplicationDbContext _dbContext;
+
+        public HomeController(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            ViewData["ClaimDefinitions"] = await _dbContext.ClaimDefinitions.Include(p => p.CredentialSchema).Include(p => p.User).ToListAsync();
             return View();
         }
 

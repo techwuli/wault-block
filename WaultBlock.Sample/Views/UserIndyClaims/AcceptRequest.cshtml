@@ -1,0 +1,39 @@
+﻿@model AcceptUserIndyClaimViewModel
+<div class="page-header">
+    <h2>Accept Request</h2>
+</div>
+
+<dl class="dl-horizontal">
+    <dt>User</dt>
+    <dd>@(((UserIndyClaim)ViewData["Claim"]).User.UserName)</dd>
+    <dt>Claim</dt>
+    <dd>@(((UserIndyClaim)ViewData["Claim"]).ClaimDefinition.CredentialSchema.Name)</dd>
+    <dt>Version</dt>
+    <dd>@(((UserIndyClaim)ViewData["Claim"]).ClaimDefinition.CredentialSchema.Version)</dd>
+    <dt>Status</dt>
+    <dd>@(((UserIndyClaim)ViewData["Claim"]).Status)</dd>
+    <dt>Last Updated</dt>
+    <dd>@(((UserIndyClaim)ViewData["Claim"]).LastUpdated)</dd>
+</dl>
+<input type="hidden" id="requestId" value="@(((UserIndyClaim)ViewData["Claim"]).Id)" />
+
+<form method="post" id="requestForm">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    @foreach (var field in ((UserIndyClaim)ViewData["Claim"]).ClaimDefinition.CredentialSchema.AttributeArray)
+    {
+        <div class="form-group attr-values" id="@field">
+            <label>@field</label>
+            <input type="text" class="form-control" name="@field" />
+        </div>
+    }
+    <input type="hidden" name="AttributeValues" id="attribute-values" />
+</form>
+<div class="form-group">
+    <a class="btn btn-default" href="/userindyclaims/requests">Cancel</a>
+    <button id="submit-button" type="submit" class="btn btn-primary">Submit</button>
+</div>
+
+
+@section Scripts{
+    <script src="~/js/accept-claim-request.js"></script>
+}

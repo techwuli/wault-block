@@ -12,9 +12,10 @@ using WaultBlock.Models;
 namespace WaultBlock.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180402065836_UserIndyClaim")]
+    partial class UserIndyClaim
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -232,11 +233,7 @@ namespace WaultBlock.Data.Migrations
 
                     b.Property<string>("ClaimResponse");
 
-                    b.Property<DateTime>("LastUpdated");
-
                     b.Property<int>("Status");
-
-                    b.Property<DateTime>("TimeCreated");
 
                     b.Property<string>("UserId");
 

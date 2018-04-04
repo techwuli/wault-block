@@ -1,0 +1,51 @@
+﻿@model IEnumerable<UserIndyClaim>
+
+<div class="page-header">
+    <h2>Requests</h2>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                User
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Last Updated
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClaimDefinition.CredentialSchema.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastUpdated)
+                </td>
+                <td>
+                    <a href="/userindyclaims/@item.Id/Accept">Accept</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+

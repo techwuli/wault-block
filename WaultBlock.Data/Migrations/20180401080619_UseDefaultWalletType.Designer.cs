@@ -7,14 +7,14 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 using WaultBlock.Data;
-using WaultBlock.Models;
 
 namespace WaultBlock.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180401080619_UseDefaultWalletType")]
+    partial class UseDefaultWalletType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,68 +185,24 @@ namespace WaultBlock.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("CredentialSchemaId");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CredentialSchemaId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ClaimDefinitions");
-                });
-
-            modelBuilder.Entity("WaultBlock.Models.CredentialSchema", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Attributes")
+                    b.Property<string>("Fields")
                         .IsRequired();
 
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<string>("UserId");
+                    b.Property<string>("ProofFields");
 
-                    b.Property<string>("Version")
+                    b.Property<bool>("Published");
+
+                    b.Property<string>("UserId")
                         .IsRequired();
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CredentialSchemas");
-                });
-
-            modelBuilder.Entity("WaultBlock.Models.UserIndyClaim", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("ClaimDefinitionId");
-
-                    b.Property<string>("ClaimRequest");
-
-                    b.Property<string>("ClaimResponse");
-
-                    b.Property<DateTime>("LastUpdated");
-
-                    b.Property<int>("Status");
-
-                    b.Property<DateTime>("TimeCreated");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClaimDefinitionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserIndyClaims");
+                    b.ToTable("ClaimDefinitions");
                 });
 
             modelBuilder.Entity("WaultBlock.Models.WalletData", b =>
@@ -257,13 +213,15 @@ namespace WaultBlock.Data.Migrations
 
                     b.Property<string>("Did");
 
-                    b.Property<bool>("IsDefault");
+                    b.Property<Guid>("Id");
 
                     b.Property<DateTime>("TimeCreated");
 
                     b.Property<string>("VerKey");
 
                     b.HasKey("Name", "UserId");
+
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -317,33 +275,10 @@ namespace WaultBlock.Data.Migrations
 
             modelBuilder.Entity("WaultBlock.Models.ClaimDefinition", b =>
                 {
-                    b.HasOne("WaultBlock.Models.CredentialSchema", "CredentialSchema")
-                        .WithMany("ClaimDefinitions")
-                        .HasForeignKey("CredentialSchemaId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("WaultBlock.Models.ApplicationUser", "User")
                         .WithMany("ClaimDefinitions")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("WaultBlock.Models.CredentialSchema", b =>
-                {
-                    b.HasOne("WaultBlock.Models.ApplicationUser", "User")
-                        .WithMany("CredentialSchemas")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("WaultBlock.Models.UserIndyClaim", b =>
-                {
-                    b.HasOne("WaultBlock.Models.ClaimDefinition", "ClaimDefinition")
-                        .WithMany("UserIndyClaims")
-                        .HasForeignKey("ClaimDefinitionId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("WaultBlock.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("WaultBlock.Models.WalletData", b =>

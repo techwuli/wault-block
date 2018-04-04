@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using WaultBlock.Data;
-using WaultBlock.Identities;
 
 namespace WaultBlock.Sample
 {
@@ -11,9 +8,6 @@ namespace WaultBlock.Sample
         public static void Main(string[] args)
         {
             var host = BuildWebHost(args);
-
-            var dbContext = host.Services.CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            WaultIdentityService.RegisterWalletType(dbContext);
             host.Run();
         }
 

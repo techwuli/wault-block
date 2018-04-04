@@ -9,7 +9,9 @@ namespace WaultBlock.Identities
     {
         #region wallets
 
-        Task<WalletData> CreateWalletAsync(ApplicationUser user, string agentId = null);
+        Task CreateWalletForBusinessAsync(ApplicationUser user);
+
+        Task CreateWalletForUserAsync(ApplicationUser user, string seed = null, bool isDefault = false);
 
         Task<IEnumerable<WalletData>> GetWalletDatasAsync(string userId);
 
@@ -17,13 +19,16 @@ namespace WaultBlock.Identities
 
         #region claims
 
-        Task<ClaimDefinition> CreateClaimDefinitionAsync(string userId, string name, string value);
+        Task CreateCredentialSchemaAsync(string userId, string name, string version, string[] attributes);
+
+        Task<ClaimDefinition> CreateClaimDefinitionAsync(string userId, Guid credentialSchemaId);
 
         Task<ClaimDefinition> GetClaimDefinitionAsync(Guid claimDefinitionId);
 
-        Task<IEnumerable<ClaimDefinition>> GetClaimDefinitionsAsync(string userId = null, bool? published = null);
+        Task<IEnumerable<ClaimDefinition>> GetClaimDefinitionsAsync(string userId = null);
 
-        Task PublishClaimDefinitionAsync(Guid claimDefinitionId, string walletName, string userId);
+        Task ApplyClaimDefinitionAsync(string userId, Guid claimDefinitionId);
+        Task AcceptClaimRequestAsync(string userId, Guid requestId, List<KeyValuePair<string, string>> attributeValues);
 
         #endregion claims
     }

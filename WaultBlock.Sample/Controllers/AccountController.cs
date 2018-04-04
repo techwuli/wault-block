@@ -237,24 +237,33 @@ namespace WaultBlock.Sample.Controllers
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation("User created a new account with password.");
 
-                    var agents = await _userManager.GetUsersInRoleAsync("agent");
+                    var agents = await _userManager.GetUsersInRoleAsync("steward");
                     string agentId = null;
+                    string seed = null;
                     if (agents.Any())
                     {
                         agentId = agents.FirstOrDefault().Id;
                     }
                     else
                     {
-                        if (!await _roleManager.RoleExistsAsync("agent"))
+                        if (!await _roleManager.RoleExistsAsync("steward"))
                         {
-                            await _roleManager.CreateAsync(new IdentityRole("agent"));
+                            await _roleManager.CreateAsync(new IdentityRole("steward"));
                         }
 
-                        await _userManager.AddToRoleAsync(user, "agent");
+                        await _userManager.AddToRoleAsync(user, "steward");
+
+                        seed = "000000000000000000000000Steward1";
                     }
 
-                    await _identityService.CreateWalletAsync(user, agentId);
-
+                    if (model.IsTrustAnchor)
+                    {
+                        await _identityService.CreateWalletForBusinessAsync(user);
+                    }
+                    else
+                    {
+                        await _identityService.CreateWalletForUserAsync(user, seed, true);
+                    }
                     return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);

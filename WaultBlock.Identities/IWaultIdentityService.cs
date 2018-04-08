@@ -19,16 +19,17 @@ namespace WaultBlock.Identities
 
         #region claims
 
-        Task CreateCredentialSchemaAsync(string userId, string name, string version, string[] attributes);
+        Task AcceptClaimRequestAsync(string userId, Guid requestId, Dictionary<string, string> attributeValues);
+
+        Task ApplyClaimDefinitionAsync(string userId, Guid claimDefinitionId);
 
         Task<ClaimDefinition> CreateClaimDefinitionAsync(string userId, Guid credentialSchemaId);
+
+        Task CreateCredentialSchemaAsync(string userId, string name, string version, string[] attributes);
 
         Task<ClaimDefinition> GetClaimDefinitionAsync(Guid claimDefinitionId);
 
         Task<IEnumerable<ClaimDefinition>> GetClaimDefinitionsAsync(string userId = null);
-
-        Task ApplyClaimDefinitionAsync(string userId, Guid claimDefinitionId);
-        Task AcceptClaimRequestAsync(string userId, Guid requestId, List<KeyValuePair<string, string>> attributeValues);
 
         #endregion claims
     }

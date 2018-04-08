@@ -26,8 +26,16 @@
                 <input asp-for="ConfirmPassword" class="form-control" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-            <input asp-for="IsTrustAnchor" type="checkbox" />
-            <button type="submit" class="btn btn-default">Register</button>
+            <div class="form-group">
+                <label>
+                    <input asp-for="IsTrustAnchor" type="checkbox" />
+                    Register as a Trust Anchor
+                </label>
+                <span class="help-block">Don't check this when register your first account. Cause that will be registered as a steward... :P</span>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-default">Register</button>
+            </div>
         </form>
     </div>
 </div>

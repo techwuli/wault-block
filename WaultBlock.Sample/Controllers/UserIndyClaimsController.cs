@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using WaultBlock.Data;
 using WaultBlock.Identities;
 using WaultBlock.Models;
-using WaultBlock.Sample.Models.UserIndyClaimsViewModels;
 
 namespace WaultBlock.Sample.Controllers
 {
@@ -73,10 +74,8 @@ namespace WaultBlock.Sample.Controllers
         }
 
         [HttpPost("UserIndyClaims/{id}/Accept")]
-        public async Task<IActionResult> AcceptRequest(Guid id, AcceptUserIndyClaimViewModel model)
+        public async Task<IActionResult> AcceptRequest(Guid id, IFormCollection formData)
         {
-
-
             var userIndyClaim = await _context.UserIndyClaims
                 .Include(p => p.User)
                 .Include(p => p.ClaimDefinition)
@@ -97,7 +96,19 @@ namespace WaultBlock.Sample.Controllers
 
             try
             {
-                await _identityService.AcceptClaimRequestAsync(userId, id, model.AttributeValues);
+                var values = new Dictionary<string, string>();
+
+                foreach (var key in formData.Keys)
+                {
+                    if (key.Equals("__RequestVerificationToken"))
+                    {
+                        continue;
+                    }
+
+                    values.Add(key, formData[key]);
+                }
+
+                await _identityService.AcceptClaimRequestAsync(userId, id, values);
                 return RedirectToAction("Requests");
             }
             catch (Exception ex)
@@ -107,7 +118,7 @@ namespace WaultBlock.Sample.Controllers
 
             ViewData["Claim"] = userIndyClaim;
 
-            return View(model);
+            return View(formData);
         }
 
         // POST: UserIndyClaims/Create

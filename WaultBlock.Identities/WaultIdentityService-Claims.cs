@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Hyperledger.Indy.AnonCredsApi;
@@ -193,7 +194,7 @@ namespace WaultBlock.Identities
 
         }
 
-        public async Task AcceptClaimRequestAsync(string userId, Guid requestId, List<KeyValuePair<string, string>> attributeValues)
+        public async Task AcceptClaimRequestAsync(string userId, Guid requestId, Dictionary<string, string> attributeValues)
         {
             var walletData = await GetDefaultWalletDataAsync(userId);
             var wallet = await Wallet.OpenWalletAsync(walletData.Name, null, null);
@@ -203,9 +204,20 @@ namespace WaultBlock.Identities
                     .FirstOrDefaultAsync(p => p.Id == requestId);
 
                 var attributes = new JObject();
+                SHA256 mySHA256 = SHA256Managed.Create();
                 foreach (var attr in attributeValues)
                 {
-                    attributes.Add(attr.Key, attr.Value);
+                    var value = attr.Value;
+
+                    var encodedValue = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(value));
+                    var encoded = "";
+                    foreach (var x in encodedValue)
+                    {
+                        encoded += x;
+                    }
+
+
+                    attributes.Add(attr.Key, JToken.FromObject(new object[] { value, encoded }));
                 }
 
                 var claimJson = await AnonCreds.IssuerCreateClaimAsync(wallet, userIndyClaim.ClaimRequest, attributes.ToString(), -1);
@@ -214,8 +226,9 @@ namespace WaultBlock.Identities
                 _dbContext.UpdateEntity(userIndyClaim);
                 await _dbContext.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             finally

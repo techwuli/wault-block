@@ -1,4 +1,4 @@
-﻿@model AcceptUserIndyClaimViewModel
+﻿@model Microsoft.AspNetCore.Http.IFormCollection
 <div class="page-header">
     <h2>Accept Request</h2>
 </div>
@@ -26,12 +26,12 @@
             <input type="text" class="form-control" name="@field" />
         </div>
     }
-    <input type="hidden" name="AttributeValues" id="attribute-values" />
+
+    <div class="form-group">
+        <a class="btn btn-default" href="/userindyclaims/requests">Cancel</a>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
 </form>
-<div class="form-group">
-    <a class="btn btn-default" href="/userindyclaims/requests">Cancel</a>
-    <button id="submit-button" type="submit" class="btn btn-primary">Submit</button>
-</div>
 
 
 @section Scripts{

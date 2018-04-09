@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  waultblock.sample:
+    image: waultblocksample
+    build:
+      context: .
+      dockerfile: WaultBlock.Sample/Dockerfile
+
+  indy.nodes:
+    image:indy-node,
+    build:
+      context: .
+      dockerfile: indy_pool.dockerfile

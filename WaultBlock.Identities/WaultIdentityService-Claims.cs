@@ -223,6 +223,7 @@ namespace WaultBlock.Identities
                 var claimJson = await AnonCreds.IssuerCreateClaimAsync(wallet, userIndyClaim.ClaimRequest, attributes.ToString(), -1);
 
                 userIndyClaim.ClaimResponse = claimJson.ClaimJson;
+                userIndyClaim.Status = UserIndyClaimStatus.Confirmed;
                 _dbContext.UpdateEntity(userIndyClaim);
                 await _dbContext.SaveChangesAsync();
             }
